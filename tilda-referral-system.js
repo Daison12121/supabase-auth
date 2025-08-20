@@ -22,6 +22,13 @@
       
       // Обновляем все ссылки на странице, добавляя реферальный код
       updateLinksWithReferralCode(referralCode);
+      
+      // Проверяем, нужно ли перенаправить на страницу регистрации
+      const redirect = getUrlParameter('redirect');
+      if (redirect === 'signup') {
+        // Перенаправляем на страницу регистрации
+        window.location.href = '/members/signup';
+      }
     }
   }
   
@@ -78,7 +85,7 @@
             console.log('Перехвачена отправка формы с email:', email, 'и реферальным кодом:', referralCode);
             
             // Отправляем запрос на регистрацию с реферальным кодом
-            fetch(`${SERVER_URL}/referral/register-with-referral`, {
+            fetch(`${SERVER_URL}/register-with-referral`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'
@@ -115,7 +122,7 @@
     const userEmail = localStorage.getItem('userEmail');
     
     if (userEmail) {
-      fetch(`${SERVER_URL}/referral/referral-info`, {
+      fetch(`${SERVER_URL}/referral-info`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
