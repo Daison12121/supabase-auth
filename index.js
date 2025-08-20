@@ -44,6 +44,11 @@ app.get("/tilda-referral-system-fixed.js", (req, res) => {
   res.sendFile(__dirname + "/tilda-referral-system-fixed.js");
 });
 
+// Маршрут для обслуживания скрипта исправления входа в кабинет
+app.get("/tilda-login-fix.js", (req, res) => {
+  res.sendFile(__dirname + "/tilda-login-fix.js");
+});
+
 // Маршрут для проверки работоспособности сервера
 app.get("/", (req, res) => {
   res.json({ status: "ok", message: "Supabase Auth Server работает" });
