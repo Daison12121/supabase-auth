@@ -34,6 +34,16 @@ app.get("/tilda-referral-system.js", (req, res) => {
   res.sendFile(__dirname + "/tilda-referral-system.js");
 });
 
+// Маршрут для обслуживания минимальной версии скрипта реферальной системы
+app.get("/tilda-referral-minimal.js", (req, res) => {
+  res.sendFile(__dirname + "/tilda-referral-minimal.js");
+});
+
+// Маршрут для обслуживания исправленной версии скрипта реферальной системы
+app.get("/tilda-referral-system-fixed.js", (req, res) => {
+  res.sendFile(__dirname + "/tilda-referral-system-fixed.js");
+});
+
 // Маршрут для проверки работоспособности сервера
 app.get("/", (req, res) => {
   res.json({ status: "ok", message: "Supabase Auth Server работает" });
