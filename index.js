@@ -29,6 +29,19 @@ app.get("/", (req, res) => {
 
 app.post("/get-user", async (req, res) => {
   try {
+    // Логирование для отладки
+    console.log("Получен запрос:", req.method, req.url);
+    console.log("Заголовки:", JSON.stringify(req.headers));
+    console.log("Тело запроса:", JSON.stringify(req.body));
+    
+    // Проверка, является ли это тестовым запросом от Tilda при настройке вебхука
+    // Tilda обычно отправляет пустой запрос или запрос без данных при проверке вебхука
+    if (Object.keys(req.body).length === 0 || 
+        (req.headers['user-agent'] && req.headers['user-agent'].includes('Tilda'))) {
+      console.log("Обнаружен тестовый запрос от Tilda");
+      return res.status(200).json({ status: "ok", message: "Webhook проверен успешно" });
+    }
+    
     // email может прийти как в JSON, так и в form-data
     const email = req.body.email;
 
