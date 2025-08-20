@@ -42,8 +42,34 @@ app.post("/get-user", async (req, res) => {
       return res.status(200).json({ status: "ok", message: "Webhook проверен успешно" });
     }
     
-    // email может прийти как в JSON, так и в form-data
-    const email = req.body.email;
+    // email может прийти как в JSON, так и в form-data, или в originalData
+    let email = req.body.email;
+    
+    // Проверяем, есть ли данные из перехватчика консоли
+    if (req.body.source === 'console-interceptor' && req.body.originalData) {
+      console.log("Получены данные из перехватчика консоли:", req.body.originalData);
+      
+      // Если email уже извлечен перехватчиком, используем его
+      if (email) {
+        console.log("Используем email из перехватчика:", email);
+      } 
+      // Иначе пытаемся извлечь email из originalData
+      else {
+        const originalData = req.body.originalData;
+        
+        if (originalData.fields && originalData.fields.Email) {
+          email = originalData.fields.Email;
+        } else if (originalData.fields && originalData.fields.email) {
+          email = originalData.fields.email;
+        } else if (originalData.Email) {
+          email = originalData.Email;
+        } else if (originalData.email) {
+          email = originalData.email;
+        }
+        
+        console.log("Извлечен email из originalData:", email);
+      }
+    }
 
     if (!email) {
       return res.status(400).json({ error: "Не передан email" });
