@@ -8,7 +8,7 @@ app.use(express.json());
 
 // ⚡ ВАЖНО: сюда подставь свой anon key из Supabase Settings → API
 const SUPABASE_URL = "https://yrmtswwmvclmkydqytvu.supabase.co";
-const SUPABASE_KEY = "ТВОЙ_АНОН_КЛЮЧ";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlybXRzd3dtdmNsbWt5ZHF5dHZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU1Njc2MTgsImV4cCI6MjA3MTE0MzYxOH0.Ish8ELhdZnI-LhxoyrcvFsbp5A_MbZUxqCXsfZw3ucs";
 
 // 📌 API endpoint для Тильды
 app.post("/get-user", async (req, res) => {
@@ -42,4 +42,5 @@ app.post("/get-user", async (req, res) => {
 });
 
 // 🚀 запуск
-app.listen(3000, () => console.log("Server running on port 3000"));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
