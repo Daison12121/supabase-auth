@@ -12,7 +12,7 @@ const app = express();
 app.use(cors({
   origin: '*', // В продакшене лучше указать конкретный домен Tilda
   methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Interceptor-Request']
 }));
 
 // Поддержка JSON и form-data
@@ -32,6 +32,14 @@ app.post("/get-user", async (req, res) => {
     // Логирование для отладки
     console.log("Получен запрос:", req.method, req.url);
     console.log("Заголовки:", JSON.stringify(req.headers));
+    
+    // Проверяем, не слишком ли большое тело запроса (для предотвращения рекурсии)
+    const requestBodySize = JSON.stringify(req.body).length;
+    if (requestBodySize > 10000) {
+      console.log("Слишком большое тело запроса:", requestBodySize, "байт. Возможна рекурсия.");
+      return res.status(413).json({ error: "Слишком большое тело запроса" });
+    }
+    
     console.log("Тело запроса:", JSON.stringify(req.body));
     
     // Проверка, является ли это тестовым запросом от Tilda при настройке вебхука
@@ -45,9 +53,9 @@ app.post("/get-user", async (req, res) => {
     // email может прийти как в JSON, так и в form-data, или в originalData
     let email = req.body.email;
     
-    // Проверяем, есть ли данные из перехватчика консоли
-    if (req.body.source === 'console-interceptor' && req.body.originalData) {
-      console.log("Получены данные из перехватчика консоли:", req.body.originalData);
+    // Проверяем, есть ли данные из перехватчика
+    if (req.body.source && req.body.originalData) {
+      console.log("Получены данные из перехватчика:", req.body.source);
       
       // Если email уже извлечен перехватчиком, используем его
       if (email) {
