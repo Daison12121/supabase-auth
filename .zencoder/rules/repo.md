@@ -3,51 +3,70 @@ description: Repository Information Overview
 alwaysApply: true
 ---
 
-# Информация о Supabase Auth Server
+# Supabase Auth Server Information
 
-## Краткое описание
-Простой сервер на Node.js с использованием Express, предоставляющий API-эндпоинт для запроса информации о пользователях из базы данных Supabase. Сервер предоставляет единственный эндпоинт `/get-user`, который принимает адреса электронной почты и возвращает соответствующие данные пользователей из Supabase.
+## Summary
+Node.js server application that provides authentication and user management services using Supabase as a backend. The server includes a Tilda integration for user data display and a referral system with multi-level rewards.
 
-## Язык и среда выполнения
-**Язык**: JavaScript (Node.js)
-**Версия**: ES Modules (использует `type: "module"` в package.json)
-**Менеджер пакетов**: npm
+## Structure
+- `/` - Root directory with main server files
+- `/.zencoder` - Configuration directory for Zencoder
+- `/tilda-display-user-data.js` - Script for displaying user data on Tilda websites
+- `/referral-routes.js` - API routes for the referral system
+- `/tilda-referral-system.js` - Client-side script for the referral system
 
-## Зависимости
-**Основные зависимости**:
-- express (^4.18.2): Фреймворк веб-сервера
-- cors (^2.8.5): Middleware для Cross-Origin Resource Sharing
-- node-fetch (^3.3.2): Fetch API для Node.js
-- dotenv: Управление переменными окружения (импортируется, но не указан в package.json)
-- body-parser: Парсинг тела запроса (импортируется, но не указан в package.json)
+## Language & Runtime
+**Language**: JavaScript (Node.js)
+**Version**: ES Modules syntax
+**Build System**: None (interpreted)
+**Package Manager**: npm
 
-## Конфигурация
-**Переменные окружения**:
-- SUPABASE_URL: URL проекта Supabase
-- SUPABASE_KEY: API-ключ Supabase
-- PORT: Порт сервера (по умолчанию 8080, если не указан)
+## Dependencies
+**Main Dependencies**:
+- express - Web server framework
+- node-fetch - HTTP client for making requests to Supabase
+- dotenv - Environment variable management
+- cors - Cross-Origin Resource Sharing middleware
+- body-parser - Request body parsing middleware
 
-## API-эндпоинты
-**POST /get-user**:
-- Принимает: JSON или form-data с полем email
-- Возвращает: Данные пользователя из Supabase или соответствующие сообщения об ошибках
-- Обработка ошибок для случаев отсутствия email, ненайденного пользователя и ошибок сервера
+## Server Configuration
+**Main File**: index.js
+**Port**: Configurable via PORT environment variable (default: 8080)
+**API Endpoints**:
+- GET / - Health check endpoint
+- POST /get-user - Retrieve user data by email
+- POST /referral/register-with-referral - Register user with referral code
+- POST /referral/referral-info - Get referral program information
+- POST /referral/process-referral-payment - Process referral payments
 
-## Установка
-```bash
-npm install
-```
+## Database
+**Type**: Supabase (PostgreSQL)
+**Tables**:
+- users - User information with referral data
+- referral_transactions - Referral payment transactions
 
-## Запуск сервера
-```bash
-npm start
-```
-или
-```bash
-node index.js
-```
+## Features
+**User Management**:
+- User lookup by email
+- User data display on Tilda websites
 
-## Структура
-- **index.js**: Основная точка входа приложения, содержащая настройку Express-сервера и API-эндпоинт
-- **.env**: Файл конфигурации окружения с учетными данными Supabase
-- **package.json**: Метаданные проекта и информация о зависимостях
+**Referral System**:
+- 3-level referral structure (30%, 10%, 5%)
+- Referral code generation and tracking
+- Referral payment processing
+- Referral statistics and reporting
+
+## Client Integration
+**Tilda Integration**:
+- User data display script for Tilda websites
+- Referral system widget for Tilda websites
+- Form interceptors for capturing user emails
+
+## Environment Variables
+**Required**:
+- SUPABASE_URL - Supabase project URL
+- SUPABASE_KEY - Supabase API key
+- PORT - Server port (optional, default: 8080)
+
+## Deployment
+The server is designed to be deployed on Railway or similar platforms that support Node.js applications.

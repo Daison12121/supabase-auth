@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Реферальная программа - Aida.kg</title>
+    <style>
+        /* Стили для страницы реферальной программы */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .referral-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .referral-header h1 {
+            color: #4CAF50;
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        
+        .referral-header p {
+            font-size: 18px;
+            color: #666;
+        }
+        
+        .referral-cards {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+        
+        .referral-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            width: calc(33.33% - 20px);
+        }
+        
+        .referral-card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .referral-card-icon {
+            width: 50px;
+            height: 50px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .referral-card-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .referral-card-content {
+            color: #666;
+        }
+        
+        .referral-steps {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .referral-steps h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .step {
+            display: flex;
+            margin-bottom: 30px;
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+        
+        .step-content h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .step-content p {
+            color: #666;
+        }
+        
+        .referral-info {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .referral-info h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .referral-link-box {
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .referral-link-box p {
+            margin-top: 0;
+            font-weight: bold;
+        }
+        
+        .referral-link {
+            word-break: break-all;
+            color: #2196F3;
+        }
+        
+        .copy-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        
+        .referral-stats {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .stat-card {
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            width: calc(25% - 20px);
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #666;
+        }
+        
+        .referral-tables {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        
+        .referral-table {
+            width: calc(50% - 20px);
+            margin-bottom: 20px;
+        }
+        
+        .referral-table h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #f5f5f5;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .referral-faq {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        
+        .referral-faq h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .faq-item {
+            margin-bottom: 20px;
+        }
+        
+        .faq-question {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .faq-answer {
+            color: #666;
+        }
+        
+        .guest-content {
+            text-align: center;
+            padding: 40px 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+        
+        .guest-content h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .login-button {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 992px) {
+            .referral-card {
+                width: calc(50% - 15px);
+            }
+            
+            .stat-card {
+                width: calc(50% - 15px);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .referral-card {
+                width: 100%;
+            }
+            
+            .stat-card {
+                width: 100%;
+            }
+            
+            .referral-table {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="referral-header">
+            <h1>Реферальная программа Aida.kg</h1>
+            <p>Приглашайте друзей и зарабатывайте вместе с нами!</p>
+        </div>
+        
+        <div class="referral-cards">
+            <div class="referral-card">
+                <div class="referral-card-header">
+                    <div class="referral-card-icon">1</div>
+                    <div class="referral-card-title">Уровень 1</div>
+                </div>
+                <div class="referral-card-content">
+                    <p>Получайте <strong>30%</strong> от суммы заказа каждого приглашенного вами пользователя.</p>
+                </div>
+            </div>
+            
+            <div class="referral-card">
+                <div class="referral-card-header">
+                    <div class="referral-card-icon">2</div>
+                    <div class="referral-card-title">Уровень 2</div>
+                </div>
+                <div class="referral-card-content">
+                    <p>Получайте <strong>10%</strong> от суммы заказа пользователей, приглашенных вашими рефералами.</p>
+                </div>
+            </div>
+            
+            <div class="referral-card">
+                <div class="referral-card-header">
+                    <div class="referral-card-icon">3</div>
+                    <div class="referral-card-title">Уровень 3</div>
+                </div>
+                <div class="referral-card-content">
+                    <p>Получайте <strong>5%</strong> от суммы заказа пользователей третьего уровня.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="referral-steps">
+            <h2>Как это работает</h2>
+            
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Получите свою реферальную ссылку</h3>
+                    <p>После регистрации на сайте вы получаете уникальную реферальную ссылку, которую можете отправлять друзьям и знакомым.</p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Приглашайте друзей</h3>
+                    <p>Отправьте свою реферальную ссылку друзьям через социальные сети, мессенджеры или электронную почту.</p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Зарабатывайте вместе</h3>
+                    <p>Когда ваши друзья регистрируются по вашей ссылке и совершают заказы, вы получаете вознаграждение на свой баланс.</p>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3>Выводите средства</h3>
+                    <p>Накопленные средства вы можете использовать для оплаты заказов на сайте или вывести на свой банковский счет.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Блок для авторизованных пользователей -->
+        <div class="user-content" style="display: none;">
+            <div class="referral-info">
+                <h2>Ваша реферальная программа</h2>
+                
+                <div class="referral-link-box">
+                    <p>Ваша реферальная ссылка:</p>
+                    <a href="#" class="referral-link"></a>
+                    <button class="copy-button copy-referral-link">Копировать ссылку</button>
+                </div>
+                
+                <div class="referral-stats">
+                    <div class="stat-card">
+                        <div class="stat-value referral-balance">0 KGS</div>
+                        <div class="stat-label">Ваш баланс</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-value referral-total-earned">0 KGS</div>
+                        <div class="stat-label">Всего заработано</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-value referral-level1-count">0</div>
+                        <div class="stat-label">Рефералы 1 уровня</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-value referral-total-count">0</div>
+                        <div class="stat-label">Всего рефералов</div>
+                    </div>
+                </div>
+                
+                <div class="referral-tables">
+                    <div class="referral-table">
+                        <h3>Ваши рефералы</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Имя</th>
+                                    <th>Дата регистрации</th>
+                                </tr>
+                            </thead>
+                            <tbody class="referrals-list">
+                                <tr>
+                                    <td colspan="2">У вас пока нет рефералов</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="referral-table">
+                        <h3>Последние транзакции</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Сумма</th>
+                                    <th>Уровень</th>
+                                    <th>Дата</th>
+                                </tr>
+                            </thead>
+                            <tbody class="transactions-list">
+                                <tr>
+                                    <td colspan="3">У вас пока нет транзакций</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Блок для гостей -->
+        <div class="guest-content">
+            <h2>Войдите в систему, чтобы начать зарабатывать</h2>
+            <p>Чтобы получить доступ к реферальной программе, вам необходимо войти в систему или зарегистрироваться.</p>
+            <a href="#login" class="login-button">Войти / Зарегистрироваться</a>
+        </div>
+        
+        <div class="referral-faq">
+            <h2>Часто задаваемые вопросы</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question">Как работает реферальная программа?</div>
+                <div class="faq-answer">
+                    <p>Наша реферальная программа имеет 3 уровня. Вы получаете 30% от суммы заказа каждого приглашенного вами пользователя (1 уровень), 10% от заказов пользователей, приглашенных вашими рефералами (2 уровень), и 5% от заказов пользователей третьего уровня.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Как пригласить друзей?</div>
+                <div class="faq-answer">
+                    <p>После регистрации вы получаете уникальную реферальную ссылку. Просто отправьте эту ссылку вашим друзьям через социальные сети, мессенджеры или электронную почту. Когда они перейдут по ссылке и зарегистрируются, они автоматически станут вашими рефералами.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Когда я получу вознаграждение?</div>
+                <div class="faq-answer">
+                    <p>Вознаграждение начисляется автоматически после того, как ваш реферал совершит заказ и оплатит его. Средства сразу поступают на ваш баланс.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Как вывести заработанные средства?</div>
+                <div class="faq-answer">
+                    <p>Вы можете использовать накопленные средства для оплаты заказов на нашем сайте или вывести их на свой банковский счет. Минимальная сумма для вывода составляет 500 KGS.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">Есть ли ограничения по количеству рефералов?</div>
+                <div class="faq-answer">
+                    <p>Нет, вы можете пригласить неограниченное количество друзей и получать вознаграждение за каждого из них.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Подключение скрипта реферальной системы -->
+    <script src="https://supabase-auth-production-4267.up.railway.app/tilda-referral-system.js"></script>
+</body>
+</html>

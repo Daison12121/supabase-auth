@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
 import cors from "cors";
+import referralRoutes from "./referral-routes.js";
 
 dotenv.config();
 const app = express();
@@ -19,8 +20,19 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Обслуживание статических файлов
+app.use(express.static('.'));
+
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
+
+// Подключаем маршруты для реферальной системы
+app.use("/referral", referralRoutes);
+
+// Маршрут для обслуживания скрипта реферальной системы
+app.get("/tilda-referral-system.js", (req, res) => {
+  res.sendFile(__dirname + "/tilda-referral-system.js");
+});
 
 // Маршрут для проверки работоспособности сервера
 app.get("/", (req, res) => {
