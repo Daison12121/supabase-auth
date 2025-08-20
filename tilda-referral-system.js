@@ -25,9 +25,31 @@
       
       // Проверяем, нужно ли перенаправить на страницу регистрации
       const redirect = getUrlParameter('redirect');
-      if (redirect === 'signup') {
-        // Перенаправляем на страницу регистрации
-        window.location.href = '/members/signup';
+      console.log('Параметр redirect:', redirect);
+      
+      // Проверяем разные варианты параметра redirect
+      if (redirect === 'signup' || redirect === 'register' || redirect === 'registration' || redirect === '1') {
+        console.log('Перенаправляем на страницу регистрации...');
+        
+        // Добавляем небольшую задержку перед перенаправлением
+        setTimeout(function() {
+          // Проверяем, существует ли страница /members/signup
+          fetch('/members/signup', { method: 'HEAD' })
+            .then(response => {
+              if (response.ok) {
+                // Если страница существует, перенаправляем на нее
+                window.location.href = '/members/signup';
+              } else {
+                // Если страница не существует, пробуем другие варианты
+                window.location.href = '/signup';
+              }
+            })
+            .catch(error => {
+              console.error('Ошибка при проверке страницы регистрации:', error);
+              // В случае ошибки, пробуем прямое перенаправление
+              window.location.href = '/members/signup';
+            });
+        }, 500);
       }
     }
   }
@@ -459,8 +481,53 @@
     displayReferralInfo();
   }
   
+  // Функция для проверки и выполнения перенаправления
+  function checkAndRedirect() {
+    // Получаем параметры из URL
+    const referralCode = getUrlParameter('ref');
+    const redirect = getUrlParameter('redirect');
+    
+    console.log('Проверка перенаправления. Реферальный код:', referralCode, 'Параметр redirect:', redirect);
+    
+    // Если есть реферальный код и параметр redirect
+    if (referralCode && (redirect === 'signup' || redirect === 'register' || redirect === 'registration' || redirect === '1')) {
+      console.log('Условия для перенаправления выполнены');
+      
+      // Сохраняем реферальный код перед перенаправлением
+      localStorage.setItem('referralCode', referralCode);
+      
+      // Определяем URL для перенаправления
+      let redirectUrl = '/members/signup';
+      
+      // Проверяем, существует ли на сайте страница /members/signup
+      const signupLinks = document.querySelectorAll('a[href*="/members/signup"], a[href*="/signup"]');
+      if (signupLinks.length > 0) {
+        // Используем первую найденную ссылку на регистрацию
+        redirectUrl = signupLinks[0].getAttribute('href');
+        console.log('Найдена ссылка на регистрацию:', redirectUrl);
+      }
+      
+      console.log('Перенаправляем на:', redirectUrl);
+      
+      // Выполняем перенаправление с небольшой задержкой
+      setTimeout(function() {
+        window.location.href = redirectUrl;
+      }, 500);
+      
+      return true;
+    }
+    
+    return false;
+  }
+
   // Инициализация
   function init() {
+    // Проверяем, нужно ли выполнить перенаправление
+    if (checkAndRedirect()) {
+      // Если выполнено перенаправление, не выполняем остальные действия
+      return;
+    }
+    
     // Сохраняем реферальный код из URL
     saveReferralCode();
     
@@ -474,6 +541,25 @@
     displayReferralInfo();
   }
   
+  // Немедленная проверка перенаправления
+  (function() {
+    const referralCode = getUrlParameter('ref');
+    const redirect = getUrlParameter('redirect');
+    
+    console.log('Немедленная проверка перенаправления. Реферальный код:', referralCode, 'Параметр redirect:', redirect);
+    
+    // Если есть реферальный код и параметр redirect
+    if (referralCode && (redirect === 'signup' || redirect === 'register' || redirect === 'registration' || redirect === '1')) {
+      console.log('Условия для немедленного перенаправления выполнены');
+      
+      // Сохраняем реферальный код перед перенаправлением
+      localStorage.setItem('referralCode', referralCode);
+      
+      // Выполняем перенаправление
+      window.location.href = '/members/signup';
+    }
+  })();
+
   // Запускаем инициализацию при загрузке страницы
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
