@@ -147,6 +147,25 @@ app.post("/register-with-referral", async (req, res) => {
     let name = req.body.name;
     let referralCode = req.body.referralCode;
     
+    // Логируем все поля запроса для отладки
+    console.log("Все поля запроса:", Object.keys(req.body).map(key => `${key}: ${req.body[key]}`).join(', '));
+    
+    // Проверяем все возможные варианты имен полей для реферального кода
+    if (!referralCode) {
+      const possibleReferralCodeFields = [
+        'referralCode', 'ReferralCode', 'referral_code', 'Referral_code', 
+        'referralcode', 'Referralcode', 'ref', 'Ref', 'refcode', 'Refcode'
+      ];
+      
+      for (const field of possibleReferralCodeFields) {
+        if (req.body[field]) {
+          referralCode = req.body[field];
+          console.log(`Найден реферальный код в поле ${field}:`, referralCode);
+          break;
+        }
+      }
+    }
+    
     // Проверяем, есть ли данные из перехватчика
     if (req.body.source && req.body.originalData) {
       console.log("Получены данные из перехватчика:", req.body.source);
@@ -190,9 +209,37 @@ app.post("/register-with-referral", async (req, res) => {
         } else if (originalData.referralCode) {
           referralCode = originalData.referralCode;
         }
+        
+        // Проверяем все возможные варианты имен полей для реферального кода в originalData
+        if (!referralCode && originalData.fields) {
+          const possibleReferralCodeFields = [
+            'referral_code', 'Referral_code', 'referralcode', 'Referralcode', 
+            'ref', 'Ref', 'refcode', 'Refcode'
+          ];
+          
+          for (const field of possibleReferralCodeFields) {
+            if (originalData.fields[field]) {
+              referralCode = originalData.fields[field];
+              console.log(`Найден реферальный код в originalData.fields.${field}:`, referralCode);
+              break;
+            }
+          }
+        }
       }
       
       console.log("Извлечены данные из originalData:", { email, name, referralCode });
+    }
+    
+    // Проверяем, есть ли реферальный код в localStorage через куки
+    if (!referralCode && req.headers.cookie) {
+      const cookies = req.headers.cookie.split(';').map(cookie => cookie.trim());
+      for (const cookie of cookies) {
+        if (cookie.startsWith('referralCode=')) {
+          referralCode = cookie.substring('referralCode='.length);
+          console.log("Найден реферальный код в куках:", referralCode);
+          break;
+        }
+      }
     }
 
     if (!email) {
@@ -321,6 +368,128 @@ app.post("/register-with-referral", async (req, res) => {
     }
 
     const newUser = await createUserResponse.json();
+    
+    // Если пользователь был зарегистрирован с реферальным кодом, обновляем счетчики рефералов
+    if (referralCode) {
+      console.log("Обновляем счетчики рефералов для реферера с кодом:", referralCode);
+      
+      try {
+        // Получаем информацию о реферере первого уровня
+        const level1ReferrerResponse = await fetch(
+          `${SUPABASE_URL}/rest/v1/users?referral_code=eq.${encodeURIComponent(referralCode)}`,
+          {
+            headers: {
+              apikey: SUPABASE_KEY,
+              Authorization: `Bearer ${SUPABASE_KEY}`,
+            },
+          }
+        );
+        
+        const level1Referrers = await level1ReferrerResponse.json();
+        
+        if (level1Referrers.length > 0) {
+          const level1Referrer = level1Referrers[0];
+          console.log("Найден реферер первого уровня:", level1Referrer.email);
+          
+          // Увеличиваем счетчик рефералов первого уровня
+          await fetch(
+            `${SUPABASE_URL}/rest/v1/users?id=eq.${level1Referrer.id}`,
+            {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                apikey: SUPABASE_KEY,
+                Authorization: `Bearer ${SUPABASE_KEY}`,
+              },
+              body: JSON.stringify({
+                level_1_referrals: (level1Referrer.level_1_referrals || 0) + 1,
+              }),
+            }
+          );
+          
+          console.log("Обновлен счетчик рефералов первого уровня для:", level1Referrer.email);
+          
+          // Если у реферера первого уровня есть свой реферер, обновляем счетчик рефералов второго уровня
+          if (level1Referrer.referred_by) {
+            const level2ReferrerResponse = await fetch(
+              `${SUPABASE_URL}/rest/v1/users?referral_code=eq.${encodeURIComponent(level1Referrer.referred_by)}`,
+              {
+                headers: {
+                  apikey: SUPABASE_KEY,
+                  Authorization: `Bearer ${SUPABASE_KEY}`,
+                },
+              }
+            );
+            
+            const level2Referrers = await level2ReferrerResponse.json();
+            
+            if (level2Referrers.length > 0) {
+              const level2Referrer = level2Referrers[0];
+              console.log("Найден реферер второго уровня:", level2Referrer.email);
+              
+              // Увеличиваем счетчик рефералов второго уровня
+              await fetch(
+                `${SUPABASE_URL}/rest/v1/users?id=eq.${level2Referrer.id}`,
+                {
+                  method: "PATCH",
+                  headers: {
+                    "Content-Type": "application/json",
+                    apikey: SUPABASE_KEY,
+                    Authorization: `Bearer ${SUPABASE_KEY}`,
+                  },
+                  body: JSON.stringify({
+                    level_2_referrals: (level2Referrer.level_2_referrals || 0) + 1,
+                  }),
+                }
+              );
+              
+              console.log("Обновлен счетчик рефералов второго уровня для:", level2Referrer.email);
+              
+              // Если у реферера второго уровня есть свой реферер, обновляем счетчик рефералов третьего уровня
+              if (level2Referrer.referred_by) {
+                const level3ReferrerResponse = await fetch(
+                  `${SUPABASE_URL}/rest/v1/users?referral_code=eq.${encodeURIComponent(level2Referrer.referred_by)}`,
+                  {
+                    headers: {
+                      apikey: SUPABASE_KEY,
+                      Authorization: `Bearer ${SUPABASE_KEY}`,
+                    },
+                  }
+                );
+                
+                const level3Referrers = await level3ReferrerResponse.json();
+                
+                if (level3Referrers.length > 0) {
+                  const level3Referrer = level3Referrers[0];
+                  console.log("Найден реферер третьего уровня:", level3Referrer.email);
+                  
+                  // Увеличиваем счетчик рефералов третьего уровня
+                  await fetch(
+                    `${SUPABASE_URL}/rest/v1/users?id=eq.${level3Referrer.id}`,
+                    {
+                      method: "PATCH",
+                      headers: {
+                        "Content-Type": "application/json",
+                        apikey: SUPABASE_KEY,
+                        Authorization: `Bearer ${SUPABASE_KEY}`,
+                      },
+                      body: JSON.stringify({
+                        level_3_referrals: (level3Referrer.level_3_referrals || 0) + 1,
+                      }),
+                    }
+                  );
+                  
+                  console.log("Обновлен счетчик рефералов третьего уровня для:", level3Referrer.email);
+                }
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Ошибка при обновлении счетчиков рефералов:", error);
+        // Не прерываем выполнение, так как пользователь уже создан
+      }
+    }
 
     return res.status(201).json({
       message: "Пользователь успешно зарегистрирован",

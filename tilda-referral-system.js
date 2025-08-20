@@ -94,10 +94,32 @@
       // Помечаем форму как перехваченную
       form.dataset.refIntercepted = 'true';
       
+      // Добавляем скрытое поле для реферального кода, если его еще нет
+      if (!form.querySelector('input[name="referralCode"]')) {
+        const referralCodeField = document.createElement('input');
+        referralCodeField.type = 'hidden';
+        referralCodeField.name = 'referralCode';
+        form.appendChild(referralCodeField);
+        
+        // Заполняем поле реферальным кодом, если он есть в localStorage
+        const savedReferralCode = localStorage.getItem('referralCode');
+        if (savedReferralCode) {
+          referralCodeField.value = savedReferralCode;
+          console.log('Добавлено скрытое поле с реферальным кодом:', savedReferralCode);
+        }
+      }
+      
       // Добавляем обработчик события отправки формы
       form.addEventListener('submit', function(e) {
         // Ищем поле email в форме
         const emailField = form.querySelector('input[type="email"], input[name="email"], input[name*="email"], input[placeholder*="email"]');
+        
+        // Обновляем значение скрытого поля реферального кода
+        const referralCodeField = form.querySelector('input[name="referralCode"]');
+        const savedReferralCode = localStorage.getItem('referralCode');
+        if (referralCodeField && savedReferralCode) {
+          referralCodeField.value = savedReferralCode;
+        }
         
         if (emailField && emailField.value) {
           const email = emailField.value.trim();
@@ -114,6 +136,7 @@
               },
               body: JSON.stringify({
                 email: email,
+                name: form.querySelector('input[name="name"], input[name*="name"], input[placeholder*="name"]')?.value || '',
                 referralCode: referralCode
               })
             })
