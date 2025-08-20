@@ -1,24 +1,29 @@
+import 'dotenv/config';
 import express from "express";
-import cors from "cors";
+import bodyParser from "body-parser";
 import fetch from "node-fetch";
+import dotenv from "dotenv";
 
+dotenv.config();
 const app = express();
-app.use(cors());
+
+// Поддержка JSON и form-data
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// ⚡ ВАЖНО: сюда подставь свой anon key из Supabase Settings → API
-const SUPABASE_URL = "https://yrmtswwmvclmkydqytvu.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlybXRzd3dtdmNsbWt5ZHF5dHZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU1Njc2MTgsImV4cCI6MjA3MTE0MzYxOH0.Ish8ELhdZnI-LhxoyrcvFsbp5A_MbZUxqCXsfZw3ucs";
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_KEY = process.env.SUPABASE_KEY;
 
-// 📌 API endpoint для Тильды
 app.post("/get-user", async (req, res) => {
-  const { email } = req.body;
-
-  if (!email) {
-    return res.json({ error: "Не передан email" });
-  }
-
   try {
+    // email может прийти как в JSON, так и в form-data
+    const email = req.body.email;
+
+    if (!email) {
+      return res.status(400).json({ error: "Не передан email" });
+    }
+
+    // Запрос к Supabase
     const response = await fetch(
       `${SUPABASE_URL}/rest/v1/users?email=eq.${email}`,
       {
@@ -32,15 +37,17 @@ app.post("/get-user", async (req, res) => {
     const data = await response.json();
 
     if (data.length === 0) {
-      return res.json({ error: "Пользователь не найден" });
+      return res.status(404).json({ error: "Пользователь не найден" });
     }
 
-    res.json(data[0]); // отдаём первого найденного пользователя
-  } catch (e) {
-    res.json({ error: "Ошибка запроса к Supabase", details: e.message });
+    return res.json(data[0]); // Возвращаем первого найденного
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Ошибка сервера" });
   }
 });
 
-// 🚀 запуск
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
