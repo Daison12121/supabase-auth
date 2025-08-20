@@ -3,9 +3,17 @@ import express from "express";
 import bodyParser from "body-parser";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
+import cors from "cors";
 
 dotenv.config();
 const app = express();
+
+// Настройка CORS для работы с Tilda
+app.use(cors({
+  origin: '*', // В продакшене лучше указать конкретный домен Tilda
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // Поддержка JSON и form-data
 app.use(express.json());
@@ -13,6 +21,11 @@ app.use(express.urlencoded({ extended: true }));
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
+
+// Маршрут для проверки работоспособности сервера
+app.get("/", (req, res) => {
+  res.json({ status: "ok", message: "Supabase Auth Server работает" });
+});
 
 app.post("/get-user", async (req, res) => {
   try {
